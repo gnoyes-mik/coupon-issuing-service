@@ -168,4 +168,61 @@ class CouponTest {
         CouponIssueException exception = assertThrows(CouponIssueException.class, coupon::issue);
         Assertions.assertEquals(exception.getErrorCode(), ErrorCode.INVALID_COUPON_ISSUE_DATE);
     }
+
+    @Test
+    @DisplayName("발급 기간이 종료되면 true를 반환한다")
+    void isIssueComplete_1() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        Coupon coupon = Coupon.builder()
+                .totalQuantity(100)
+                .issuedQuantity(99)
+                .dateIssueStart(now.minusDays(2))
+                .dateIssueEnd(now.minusDays(1))
+                .build();
+
+        // when
+        boolean result = coupon.isIssueComplete();
+
+        // then
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("잔여 발급 가능 수량이 없다면 true를 반환한다")
+    void isIssueComplete_2() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        Coupon coupon = Coupon.builder()
+                .totalQuantity(100)
+                .issuedQuantity(100)
+                .dateIssueStart(now.minusDays(2))
+                .dateIssueEnd(now.plusDays(10))
+                .build();
+
+        // when
+        boolean result = coupon.isIssueComplete();
+
+        // then
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("발급 기한과 수량이 유효하면 false를 반환한다")
+    void isIssueComplete_3() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        Coupon coupon = Coupon.builder()
+                .totalQuantity(100)
+                .issuedQuantity(0)
+                .dateIssueStart(now.minusDays(2))
+                .dateIssueEnd(now.plusDays(10))
+                .build();
+
+        // when
+        boolean result = coupon.isIssueComplete();
+
+        // then
+        Assertions.assertFalse(result);
+    }
 }

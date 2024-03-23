@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import me.gnoyes.couponcore.exception.CouponIssueException;
 import me.gnoyes.couponcore.model.Coupon;
 import me.gnoyes.couponcore.model.CouponIssue;
+import me.gnoyes.couponcore.model.event.CouponIssueCompleteEvent;
 import me.gnoyes.couponcore.repository.mysql.CouponIssueJpaRepository;
 import me.gnoyes.couponcore.repository.mysql.CouponIssueRepository;
 import me.gnoyes.couponcore.repository.mysql.CouponJpaRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +21,15 @@ public class CouponIssueService {
     private final CouponJpaRepository couponJpaRepository;
     private final CouponIssueJpaRepository couponIssueJpaRepository;
     private final CouponIssueRepository couponIssueRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void issue(long couponId, long userId) {
         Coupon coupon = findCoupon(couponId);
         coupon.issue();
         saveCouponIssue(couponId, userId);
+        // 쿠폰 수량만큼 발행 시 만료 이벤트룰 발행하여 추가적인 불필요 리소스를 줄인다.
+        publishCouponIssueCompleteEvent(coupon);
     }
 
     @Transactional(readOnly = true)
@@ -46,6 +51,12 @@ public class CouponIssueService {
         CouponIssue issue = couponIssueRepository.findFirstCouponIssue(couponId, userId);
         if (issue != null) {
             throw new CouponIssueException(DUPLICATED_COUPON_ISSUE, "이미 발급된 쿠폰입니다. userId: %s, couponId: %s".formatted(userId, couponId));
+        }
+    }
+
+    private void publishCouponIssueCompleteEvent(Coupon coupon) {
+        if (coupon.isIssueComplete()) {
+            applicationEventPublisher.publishEvent(new CouponIssueCompleteEvent(coupon.getId()));
         }
     }
 }
