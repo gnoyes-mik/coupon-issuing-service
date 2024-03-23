@@ -13,7 +13,8 @@ public class AsyncCouponIssueServiceV2 {
     private final CouponCacheService couponCacheService;
 
     public void issue(long couponId, long userId) {
-        CouponRedisEntity coupon = couponCacheService.getCouponCache(couponId);
+        // 매번 캐시 값을 얻기위해 Redis를 요청하였지만 로컬 캐시를 추가로 두어 Redis 사이의 네트워크 비용을 줄인다. (이중 캐시)
+        CouponRedisEntity coupon = couponCacheService.getCouponLocalCache(couponId);
         coupon.checkIssuableCoupon();
         issueRequest(couponId, userId, coupon.totalQuantity());
     }
