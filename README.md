@@ -19,9 +19,9 @@
   - Redis 7.2.4
 
 - Module Info
+    - coupon-api : 쿠폰 발급 요청 서버
+    - coupon-consumer : 쿠폰 발급 서버
     - coupon-core : 쿠폰 발급 로직 
-    - coupon-api : 쿠폰 발급 API 
-    - coupon-consumer : 
 
 - Test
   - Unit Test : JUnit 
