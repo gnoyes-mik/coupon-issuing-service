@@ -13,19 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class CouponIssueController {
     private final CouponIssueRequestService couponIssueRequestService;
 
-    @PostMapping("/v1/issue")
+    @PostMapping("/v1/coupon")
     public CouponIssueResponseDto issueV1(@RequestBody CouponIssueRequestDto request) {
         couponIssueRequestService.issueRequestV1(request);
         return new CouponIssueResponseDto(true, null);
     }
 
-    @PostMapping("/v1/issue-async")
+    @PostMapping("/v2/coupon")
     public CouponIssueResponseDto asyncIssueV1(@RequestBody CouponIssueRequestDto request) {
         couponIssueRequestService.asyncIssueRequestV1(request);
         return new CouponIssueResponseDto(true, null);
     }
 
-    @PostMapping("/v2/issue-async")
+    @PostMapping("/v3/coupon")
     public CouponIssueResponseDto asyncIssueV2(@RequestBody CouponIssueRequestDto request) {
         couponIssueRequestService.asyncIssueRequestV2(request);
         return new CouponIssueResponseDto(true, null);
