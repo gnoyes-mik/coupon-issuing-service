@@ -36,7 +36,7 @@ class CouponIssueRedisServiceTest extends TestConfig {
         long couponId = 1;
 
         // when
-        boolean result = service.availableTotalIssueQuantity(totalIssueQuantity, couponId);
+        boolean result = service.isAvailableTotalIssueQuantity(totalIssueQuantity, couponId);
 
         // then
         Assertions.assertTrue(result);
@@ -53,7 +53,7 @@ class CouponIssueRedisServiceTest extends TestConfig {
         });
 
         // when
-        boolean result = service.availableTotalIssueQuantity(totalIssueQuantity, couponId);
+        boolean result = service.isAvailableTotalIssueQuantity(totalIssueQuantity, couponId);
 
         // then
         Assertions.assertFalse(result);
@@ -67,7 +67,7 @@ class CouponIssueRedisServiceTest extends TestConfig {
         long userId = 1;
 
         // when
-        boolean result = service.availableUserIssueQuantity(couponId, userId);
+        boolean result = service.isAvailableUser(couponId, userId);
 
         // then
         Assertions.assertTrue(result);
@@ -82,7 +82,7 @@ class CouponIssueRedisServiceTest extends TestConfig {
         redisTemplate.opsForSet().add(getIssueRequestKey(couponId), String.valueOf(userId));
 
         // when
-        boolean result = service.availableUserIssueQuantity(couponId, userId);
+        boolean result = service.isAvailableUser(couponId, userId);
 
         // then
         Assertions.assertFalse(result);
